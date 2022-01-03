@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.tenisapp.ui.auth.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_selectPlayersFragment"
+            app:destination="@id/selectPlayersFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_registrerFragment2"
+            app:destination="@id/registrerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registrerFragment"
+        android:name="com.example.tenisapp.ui.auth.RegistrerFragment"
+        android:label="fragment_registrer"
+        tools:layout="@layout/fragment_registrer" >
+        <action
+            android:id="@+id/action_registrerFragment_to_selectPlayersFragment"
+            app:destination="@id/selectPlayersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/torneoFragment"
+        android:name="com.example.tenisapp.ui.home.TorneoFragment"
+        android:label="fragment_torneo"
+        tools:layout="@layout/fragment_torneo" />
+    <fragment
+        android:id="@+id/selectPlayersFragment"
+        android:name="com.example.tenisapp.ui.home.SelectPlayersFragment"
+        android:label="fragment_select_players"
+        tools:layout="@layout/fragment_select_players" >
+        <action
+            android:id="@+id/action_selectPlayersFragment_to_torneoFragment"
+            app:destination="@id/torneoFragment" />
+    </fragment>
+</navigation>
