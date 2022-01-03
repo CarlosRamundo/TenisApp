@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/carlos/AndroidStudioProjects/TenisApp/app/src/main/res/layout/fragment_login.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/carlos/AndroidStudioProjects/TenisApp/app/src/main/res/layout/fragment_players.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/carlos/AndroidStudioProjects/TenisApp/app/src/main/res/layout/fragment_select_players.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/carlos/AndroidStudioProjects/TenisApp/app/src/main/res/layout/fragment_torneo.xml" value="0.20416666666666666" />

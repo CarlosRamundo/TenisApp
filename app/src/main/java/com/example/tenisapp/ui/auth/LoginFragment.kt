@@ -3,32 +3,59 @@ package com.example.tenisapp.ui.auth
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.tenisapp.R
 import com.example.tenisapp.data.auth.AuthDataSource
 import com.example.tenisapp.databinding.FragmentLoginBinding
 import com.example.tenisapp.presentation.auth.AuthViewModel
+import com.example.tenisapp.presentation.auth.AuthViewModelFactory
+import com.example.tenisapp.repository.auth.AuthRepoImpl
+import com.example.tenisapp.core.Result
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class LoginFragment : Fragment(R.layout.fragment_login) {
-    private lateinit var bindig: FragmentLoginBinding
-    private val auth by lazy { FirebaseAuth.getInstance() }
+
+    private lateinit var auth : FirebaseAuth
     private val viewModel by viewModels<AuthViewModel> {
-        AuthViewModelFactory(
-            AuthRepoImpl(
-                AuthDataSource()
-            )
-        )
+        AuthViewModelFactory(AuthRepoImpl(AuthDataSource()))
     }
+    private lateinit var binding: FragmentLoginBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bindig = FragmentLoginBinding.bind(view)
+        binding = FragmentLoginBinding.bind(view)
+        auth = Firebase.auth
         isUserLoggedIn()
-        doLoggin()
-        goToRegisterPage()
+        doLogin()
+        createdUser()
+    }
+
+    private fun doLogin() {
+        binding.btnLogin.setOnClickListener {
+            val email = binding.etEmail.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
+            viewModel.signIn(email, password).observe(viewLifecycleOwner, { result ->
+                when (result) {
+                    is Result.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    is Result.Success -> {
+                        binding.progressBar.visibility = View.GONE
+                        findNavController().navigate(R.id.action_loginFragment_to_selectPlayersFragment)
+                    }
+                    is Result.Failure-> {
+                        binding.progressBar.visibility = View.GONE
+                        Toast.makeText(requireContext(), "Falló el ingreso a la App, intente nuevamente!!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            })
+        }
     }
 
     private fun isUserLoggedIn() {
@@ -36,51 +63,9 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             findNavController().navigate(R.id.action_loginFragment_to_selectPlayersFragment)
         }
     }
-
-    private fun doLoggin() {
-        bindig.btnSignin.setOnClickListener {
-            val email = bindig.emailAdress.text.toString()
-            val password = bindig.password.text.toString()
-            validCredentials(email, password)
-            signIn(email, password)
+    private fun createdUser() {
+        binding.createdUser.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_registrerFragment2)
         }
     }
-
-    private fun goToRegisterPage(){
-        bindig.txtSignup.setOnClickListener(){
-            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
-        }
-    }
-    private fun validCredentials(email: String, password: String) {
-        if (email.isEmpty()) {
-            bindig.emailAdress.error = "Email is empty"
-            return
-        }
-        if (password.isEmpty()) {
-            bindig.password.error = "Password is empty"
-            return
-        }
-
-    }
-
-    private fun signIn(email: String, password: String) {
-        viewModel.signIn(email, password).observe(viewLifecycleOwner, Observer { result ->
-            when (result) {
-                is Result.Loading -> {
-                    bindig.progressBar.visibility = View.VISIBLE
-                    bindig.btnSignin.isEnabled = false
-                }
-                is Result.Success -> {
-                    bindig.progressBar.visibility = View.GONE
-                    findNavController().navigate(R.id.action_loginFragment_to_homeScreenFragment)
-                }
-                is Result.Failure -> {
-                    bindig.progressBar.visibility = View.GONE
-                    bindig.btnSignin.isEnabled = true
-                    Toast.makeText(requireContext(), "Error:${result.exception}",Toast.LENGTH_SHORT).show()
-                }
-            }
-        })
-    }
-}
 }
